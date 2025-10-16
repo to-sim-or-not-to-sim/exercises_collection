@@ -1,2 +1,2 @@
-# exercises_collection
+# Exercises_collection
 A collection of exercises done at university
