@@ -175,7 +175,7 @@ function inverse_LU(A::AbstractMatrix{T} where T<:Number)
     return inverted
 end
 
-"""Returns P, L and U where LU=PA with L lower triangular matrix, U upper triangular matrix and P permutation matrix."""
+"""Returns P, L and U where LU=PA with L lower triangular matrix, U upper triangular matrix and P permutation matrix. Returns also the permutation number."""
 function PLU_decomposition(A::AbstractMatrix{T} where T<:Number)
     n,m=size(A)
     L=diagm(ones(n))
