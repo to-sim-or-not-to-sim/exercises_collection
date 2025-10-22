@@ -262,4 +262,93 @@ function inverse_PLU(A::AbstractMatrix{T} where T<:Number)
     return inverted
 end
 
+"""Evaluates a vector's maximum value."""
+function max(v::Vector{T} where T<:Number)
+    maximum=v[1]
+    len=length(v)
+    for i in 2:len
+        if v[i]>maximum
+            maximum=v[i]
+        end
+    end
+    return maximum
+end
+
+"""Returns the 1-norm of a vector v."""
+function one_norm(v::Vector{T} where T<:Number)
+    norm=0
+    len=length(v)
+    for i in 1:len
+        norm+=abs(v[i])
+    end
+    return norm
+end
+
+"""Returns the 1-norm of a matrix A."""
+function one_norm(A::AbstractMatrix{T} where T<:Number)
+    n,m=size(A)
+    norm=zeros(m)
+    for j in 1:m
+        for i in 1:n
+            norm[j]+=abs(A[i,j])
+        end
+    end
+    return max(norm)
+end
+
+"""Evaluates the condition number of a square matrix A using 1-norm."""
+function one_norm_matrix_condition_number(A::AbstractMatrix{T} where T<:Number)
+    invA=inverse_PLU(A)
+    norm_A=one_norm(A)
+    norm_invA=one_norm(invA)
+    return norm_A*norm_invA
+end
+
+"""Returns the R matrix for cholensky decomposition defined as A=R^T R."""
+function cholesky_decomposition(A::AbstractMatrix{T} where T<:Number)
+    n,m=size(A)
+    R=zeros(Float64,n,m)
+    for i in 1:m
+        for j in 1:i
+            element=0
+            sum=0
+            if i==j
+                for k in 1:i-1
+                    sum+=R[k,i]^2
+                end
+                if A[j,i]-sum>=0
+                    element=sqrt(A[j,i]-sum)
+                end
+            else
+                for k in 1:i-1
+                    sum+=R[k,i]*R[k,j]
+                end
+                element=(A[j,i]-sum)/R[j,j]
+            end
+            R[j,i]=element
+        end
+    end
+    return R
+end
+
+"""Solves the linear system caused by a positive definite matrix A: Ax=b."""
+function matrix_solver_cholesky(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+    R=cholesky_decomposition(A)
+    u=lower_triangular_matrix_solver(R',b)
+    x=upper_triangular_matrix_solver(R,u)
+    return x
+end
+
+"""Says if a matrix is positive definite."""
+function is_positive_definite(A::AbstractMatrix{T} where T<:Number,threshold=1e-15)
+    n=size(A,1)
+    b_test=ones(n)
+    x_PLU=matrix_solver_PLU(A,b_test)
+    x_chole=matrix_solver_cholesky(A,b_test)
+    if all(abs.(x_chole-x_PLU).<=threshold)
+        return true
+    end
+    return false
+end
+
 end
