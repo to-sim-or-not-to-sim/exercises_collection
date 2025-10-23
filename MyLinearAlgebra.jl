@@ -351,4 +351,48 @@ function is_positive_definite(A::AbstractMatrix{T} where T<:Number,threshold=1e-
     return false
 end
 
+"""Solves the linear system Nx=z with N=A^tA and z=A^tb."""
+function linear_leastsquares(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+    At=A'
+    N=At*A
+    z=At*b
+    x=matrix_solver_cholesky(N,z)
+    return x
+end
+
+"""Returns a matrix filled with the standard polynomials of a set of data."""
+function poly_matrix(set::Vector{T} where T<:Number,n::Int64)
+    m=length(set)
+    A=zeros(m,n)
+    for i in 1:m
+        for j in 1:n
+            A[i,j]=set[i]^(j-1)
+        end
+    end
+    return A
+end
+
+"""Returns a matrix filled with sin and cos of a set of data."""
+function fourier_matrix(set::Vector{T} where T<:Number,n::Int64)
+    m=length(set)
+    p=1+2*n
+    A=zeros(m,p)
+    for i in 1:m
+        for j in 1:p
+            value=1
+            if j==1
+                value=1
+            elseif j%2==1
+                k=(j-1)/2
+                value=sin(k*set[i])
+            else
+                k=j/2
+                value=cos(k*set[i])
+            end
+            A[i,j]=value
+        end
+    end
+    return A
+end
+
 end
