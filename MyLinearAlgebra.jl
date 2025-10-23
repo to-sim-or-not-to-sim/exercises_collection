@@ -1,4 +1,5 @@
 module MyLinearAlgebra
+using PyPlot
 
 """Returns the matrix with the elements of a vector on its diagonal: diagm(diagonal)."""
 function diagm(diagonal::Vector{T} where T<:Number)
@@ -393,6 +394,28 @@ function fourier_matrix(set::Vector{T} where T<:Number,n::Int64)
         end
     end
     return A
+end
+
+function plot_matrix(x::Vector{T} where T<:Number,A::AbstractMatrix{T} where T<:Number,z::Vector{T} where T<:Number,color::String,label::String)
+    plot(x,A*z,color=color,label=label)
+end
+
+function taylor_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:Number,n::Int64,plot::Bool=false,color::String="blue",label::String="Taylor fit")
+    A=poly_matrix(x,n)
+    z=linear_leastsquares(A,y)
+    if plot
+        plot_matrix(x,A,z,color,label)
+    end
+    return z
+end
+
+function fourier_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:Number,n::Int64,plot::Bool=false,color::String="blue",label::String="Fourier fit")
+    A=fourier_matrix(x,n)
+    z=linear_leastsquares(A,y)
+    if plot
+        plot_matrix(x,A,z,color,label)
+    end
+    return z
 end
 
 end
