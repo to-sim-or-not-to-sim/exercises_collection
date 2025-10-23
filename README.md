@@ -1,4 +1,4 @@
 # Exercises collection
 A collection of exercises done at university during computational physics lectures. It includes:
-- Linear Algebra library
+- Linear Algebra library (with linear fit)
 - Coming soon
