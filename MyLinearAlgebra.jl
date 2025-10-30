@@ -2,7 +2,7 @@ module MyLinearAlgebra
 using PyPlot
 
 """Returns the matrix with the elements of a vector on its diagonal: diagm(diagonal)."""
-function diagm(diagonal::Vector{T} where T<:Number)
+function diagm(diagonal::Vector{T}) where T<:Number
     n=length(diagonal)
     A=zeros(Float64,n,n)
     for i in 1:n
@@ -12,7 +12,7 @@ function diagm(diagonal::Vector{T} where T<:Number)
 end
 
 """Returns x where Ax=b, where A is a lower triangular matrix and b is a vector."""
-function lower_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function lower_triangular_matrix_solver(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     n=length(b)
     x=zeros(Float64,n)
     for i in 1:n
@@ -26,7 +26,7 @@ function lower_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::
 end
 
 """Returns x where Ax=b, where A is a upper triangular matrix and b is a vector."""
-function upper_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function upper_triangular_matrix_solver(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     n=length(b)
     x=zeros(Float64,n)
     for i in n:-1:1
@@ -40,7 +40,7 @@ function upper_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::
 end   
 
 """Returns x where Ax=b, where A is a lower triangular matrix and b is a matrix."""
-function lower_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::AbstractMatrix{T} where T<:Number)
+function lower_triangular_matrix_solver(A::AbstractMatrix{T},b::AbstractMatrix{T}) where T<:Number
     p,n=size(b)
     x=zeros(Float64,n,p)
     for k in 1:p
@@ -56,7 +56,7 @@ function lower_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::
 end
 
 """Returns x where Ax=b, where A is a upper triangular matrix and b is a matrix."""
-function upper_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::AbstractMatrix{T} where T<:Number)
+function upper_triangular_matrix_solver(A::AbstractMatrix{T},b::AbstractMatrix{T}) where T<:Number
     p,n=size(b)
     x=zeros(Float64,n,p)
     for k in 1:p
@@ -72,7 +72,7 @@ function upper_triangular_matrix_solver(A::AbstractMatrix{T} where T<:Number,b::
 end  
 
 """Returns L and U where LU=A with L lower triangular matrix and U upper triangular matrix."""
-function LU_decomposition(A::AbstractMatrix{T} where T<:Number)
+function LU_decomposition(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     L=diagm(ones(n))
     U=zeros(Float64,n,n)
@@ -85,7 +85,7 @@ function LU_decomposition(A::AbstractMatrix{T} where T<:Number)
     return L, U
 end 
 
-function display_LU(A::AbstractMatrix{T} where T<:Number)
+function display_LU(A::AbstractMatrix{T}) where T<:Number
     println("Matrix A:")
     display(A)
     L,U=LU_decomposition(A)
@@ -98,7 +98,7 @@ function display_LU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns x where Ax=b using LU=A, where A is a matrix and b a vector."""
-function matrix_solver_LU(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function matrix_solver_LU(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     L,U=LU_decomposition(A)
     z=lower_triangular_matrix_solver(L,b)
     x=upper_triangular_matrix_solver(U,z)
@@ -106,7 +106,7 @@ function matrix_solver_LU(A::AbstractMatrix{T} where T<:Number,b::Vector{T} wher
 end
 
 """Returns x where Ax=b using LU=A, where A is a matrix and b a matrix."""
-function matrix_solver_LU(A::AbstractMatrix{T} where T<:Number,B::AbstractMatrix{T} where T<:Number)
+function matrix_solver_LU(A::AbstractMatrix{T},B::AbstractMatrix{T}) where T<:Number
     L,U=LU_decomposition(A)
     n,m=size(B)
     X=zeros(Float64,n,m)
@@ -119,7 +119,7 @@ function matrix_solver_LU(A::AbstractMatrix{T} where T<:Number,B::AbstractMatrix
     return X
 end
 
-function display_LU_solver(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function display_LU_solver(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     x=matrix_solver_LU(A,b)
     println("Matrix A:")
     display(A)
@@ -158,7 +158,7 @@ function rotation_matrix(theta::Number)
 end
 
 """Returns the determinant of a matrix A applying LU decomposition."""
-function det_LU(A::AbstractMatrix{T} where T<:Number)
+function det_LU(A::AbstractMatrix{T}) where T<:Number
     L,U=LU_decomposition(A)
     n,m=size(U)
     det=1
@@ -169,7 +169,7 @@ function det_LU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns the inverse of a matrix A applying LU decomposition and solving the system: AX=I."""
-function inverse_LU(A::AbstractMatrix{T} where T<:Number)
+function inverse_LU(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     identity=diagm(ones(n))
     inverted=matrix_solver_LU(A,identity)
@@ -177,7 +177,7 @@ function inverse_LU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns P, L and U where LU=PA with L lower triangular matrix, U upper triangular matrix and P permutation matrix. Returns also the permutation number."""
-function PLU_decomposition(A::AbstractMatrix{T} where T<:Number)
+function PLU_decomposition(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     L=diagm(ones(n))
     P=diagm(ones(n))
@@ -208,7 +208,7 @@ function PLU_decomposition(A::AbstractMatrix{T} where T<:Number)
     return P, L, U, s
 end 
 
-function display_PLU(A::AbstractMatrix{T} where T<:Number)
+function display_PLU(A::AbstractMatrix{T}) where T<:Number
     println("Matrix A:")
     display(A)
     P,L,U,s=PLU_decomposition(A)
@@ -223,7 +223,7 @@ function display_PLU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns x where Ax=b using LU=PA, where A is a matrix and b a vector."""
-function matrix_solver_PLU(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function matrix_solver_PLU(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     P,L,U,s=PLU_decomposition(A)
     z=lower_triangular_matrix_solver(L,P*b)
     x=upper_triangular_matrix_solver(U,z)
@@ -231,7 +231,7 @@ function matrix_solver_PLU(A::AbstractMatrix{T} where T<:Number,b::Vector{T} whe
 end
 
 """Returns x where Ax=b using LU=PA, where A is a matrix and b a matrix."""
-function matrix_solver_PLU(A::AbstractMatrix{T} where T<:Number,B::AbstractMatrix{T} where T<:Number)
+function matrix_solver_PLU(A::AbstractMatrix{T},B::AbstractMatrix{T}) where T<:Number
     P,L,U,s=PLU_decomposition(A)
     n,m=size(B)
     X=zeros(Float64,n,m)
@@ -245,7 +245,7 @@ function matrix_solver_PLU(A::AbstractMatrix{T} where T<:Number,B::AbstractMatri
 end
 
 """Returns the determinant of a matrix A applying LU decomposition and the permutation matrix P."""
-function det_PLU(A::AbstractMatrix{T} where T<:Number)
+function det_PLU(A::AbstractMatrix{T}) where T<:Number
     P,L,U,s=PLU_decomposition(A)
     n,m=size(U)
     det=1
@@ -256,7 +256,7 @@ function det_PLU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns the inverse of a matrix A solving the system: AX=I, applying LU decomposition and the permutation matrix P."""
-function inverse_PLU(A::AbstractMatrix{T} where T<:Number)
+function inverse_PLU(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     identity=diagm(ones(n))
     inverted=matrix_solver_PLU(A,identity)
@@ -264,7 +264,7 @@ function inverse_PLU(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Evaluates a vector's maximum value."""
-function max(v::Vector{T} where T<:Number)
+function max(v::Vector{T}) where T<:Number
     maximum=v[1]
     len=length(v)
     for i in 2:len
@@ -276,7 +276,7 @@ function max(v::Vector{T} where T<:Number)
 end
 
 """Returns the 1-norm of a vector v."""
-function one_norm(v::Vector{T} where T<:Number)
+function one_norm(v::Vector{T}) where T<:Number
     norm=0
     len=length(v)
     for i in 1:len
@@ -286,7 +286,7 @@ function one_norm(v::Vector{T} where T<:Number)
 end
 
 """Returns the 1-norm of a matrix A."""
-function one_norm(A::AbstractMatrix{T} where T<:Number)
+function one_norm(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     norm=zeros(m)
     for j in 1:m
@@ -298,7 +298,7 @@ function one_norm(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Evaluates the condition number of a square matrix A using 1-norm."""
-function one_norm_matrix_condition_number(A::AbstractMatrix{T} where T<:Number)
+function one_norm_matrix_condition_number(A::AbstractMatrix{T}) where T<:Number
     invA=inverse_PLU(A)
     norm_A=one_norm(A)
     norm_invA=one_norm(invA)
@@ -306,7 +306,7 @@ function one_norm_matrix_condition_number(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Returns the R matrix for cholensky decomposition defined as A=R^T R."""
-function cholesky_decomposition(A::AbstractMatrix{T} where T<:Number)
+function cholesky_decomposition(A::AbstractMatrix{T}) where T<:Number
     n,m=size(A)
     R=zeros(Float64,n,m)
     for i in 1:m
@@ -333,7 +333,7 @@ function cholesky_decomposition(A::AbstractMatrix{T} where T<:Number)
 end
 
 """Solves the linear system caused by a positive definite matrix A: Ax=b."""
-function matrix_solver_cholesky(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function matrix_solver_cholesky(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     R=cholesky_decomposition(A)
     u=lower_triangular_matrix_solver(R',b)
     x=upper_triangular_matrix_solver(R,u)
@@ -341,7 +341,7 @@ function matrix_solver_cholesky(A::AbstractMatrix{T} where T<:Number,b::Vector{T
 end
 
 """Says if a matrix is positive definite."""
-function is_positive_definite(A::AbstractMatrix{T} where T<:Number,threshold=1e-15)
+function is_positive_definite(A::AbstractMatrix{T},threshold=1e-15) where T<:Number
     n=size(A,1)
     b_test=ones(n)
     x_PLU=matrix_solver_PLU(A,b_test)
@@ -353,16 +353,16 @@ function is_positive_definite(A::AbstractMatrix{T} where T<:Number,threshold=1e-
 end
 
 """Solves the linear system Nx=z with N=A^tA and z=A^tb."""
-function linear_leastsquares(A::AbstractMatrix{T} where T<:Number,b::Vector{T} where T<:Number)
+function linear_leastsquares(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     At=A'
     N=At*A
     z=At*b
-    x=matrix_solver_cholesky(N,z)
+    x=matrix_solver_PLU(N,z)
     return x
 end
 
 """Returns a matrix filled with the standard polynomials of a set of data."""
-function poly_matrix(set::Vector{T} where T<:Number,n::Int64)
+function poly_matrix(set::Vector{T},n::Int64) where T<:Number
     m=length(set)
     A=zeros(m,n)
     for i in 1:m
@@ -374,7 +374,7 @@ function poly_matrix(set::Vector{T} where T<:Number,n::Int64)
 end
 
 """Returns a matrix filled with sin and cos of a set of data."""
-function fourier_matrix(set::Vector{T} where T<:Number,n::Int64)
+function fourier_matrix(set::Vector{T},n::Int64) where T<:Number
     m=length(set)
     p=1+2*n
     A=zeros(m,p)
@@ -396,11 +396,14 @@ function fourier_matrix(set::Vector{T} where T<:Number,n::Int64)
     return A
 end
 
-function plot_matrix(x::Vector{T} where T<:Number,A::AbstractMatrix{T} where T<:Number,z::Vector{T} where T<:Number,color::String,label::String)
+function plot_matrix(x::Vector{T},A::AbstractMatrix{T},z::Vector{T},color::String,label::String) where T<:Number
     plot(x,A*z,color=color,label=label)
 end
 
-function taylor_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:Number,n::Int64,plot::Bool=false,color::String="blue",label::String="Taylor fit")
+"""Evaluates Taylor series for a function f given a certain number of point x, y=f(x). Eventually can plot it.
+Disclaimer: it returns Taylor series for n->+inf and infinite points; otherwise it approximate it to better fit the data.
+Suggestion: use it on a small interval with a lot of data in it."""
+function taylor_linear_fit(x::Vector{T},y::Vector{T},n::Int64;plot::Bool=false,color::String="blue",label::String="Taylor fit") where T<:Number
     A=poly_matrix(x,n)
     z=linear_leastsquares(A,y)
     if plot
@@ -409,7 +412,10 @@ function taylor_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:Nu
     return z
 end
 
-function fourier_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:Number,n::Int64,plot::Bool=false,color::String="blue",label::String="Fourier fit")
+"""Evaluates Fourier series for a function f given a certain number of point x, y=f(x). Eventually can plot it.
+Disclaimer: it returns Taylor series for n->+inf and infinite points; otherwise it approximate it to better fit the data.
+Suggestion: use it on a small interval with a lot of data in it. It works better on periodic functions (2pi) and with little coefficients."""
+function fourier_linear_fit(x::Vector{T},y::Vector{T},n::Int64;plot::Bool=false,color::String="blue",label::String="Fourier fit") where T<:Number
     A=fourier_matrix(x,n)
     z=linear_leastsquares(A,y)
     if plot
@@ -418,4 +424,72 @@ function fourier_linear_fit(x::Vector{T} where T<:Number,y::Vector{T} where T<:N
     return z
 end
 
+"""Calculates the norm of a vector."""
+function norm(x::Vector{T}) where T<:Number
+    n=length(x)
+    sum=0
+    for i in 1:n
+        sum+=x[i]^2
+    end
+    return sqrt(sum)
+end
+
+"""Applys the QR decomposition to a matrix A."""
+function QR_decomposition(A::AbstractMatrix{T}) where T<:Number
+    m,n=size(A)
+    Q=zeros(Float64,m,n)
+    R=zeros(Float64,n,n)
+    P_i=zeros(Float64,m,m)
+    identity=diagm(ones(m))
+    P_i[:,:]=identity[:,:]
+    v_tot=zeros(Float64,m,n)
+    for i in 1:n
+        v_i=P_i*A[:,i]
+        v_tot[:,i]=v_i
+        Q[:,i]=v_i/norm(v_i)
+        P_i*=(identity-Q[:,i]*Q[:,i]')
+    end
+    for i in 1:n
+        for j in i:n
+            v_j=v_tot[:,j]
+            R[i,j]=Q[:,i]'*A[:,j]
+        end
+    end
+    return Q,R
+end
+
+"""Solves a linear system using QR decomposition."""
+function matrix_solver_QR(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
+    Q,R=QR_decomposition(A)
+    z=Q'*b
+    x=upper_triangular_matrix_solver(R,z)
+    return x
+end
+
+"""Solves a linear system using QR decomposition and Qless algorithm."""
+function matrix_solver_Qless(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
+    n,m=size(A)
+    A2=zeros(n,m+1)
+    A2[:,1:m]=A[:,:]
+    A2[:,m+1]=b
+    Q,R=QR_decomposition(A2)
+    z=R[:,m+1]
+    x=upper_triangular_matrix_solver(R,z)
+    return x
+end
+
+"""Returns a try to diagonalize the matrix and the matrix with eigenvectors."""
+function eigenvalues(A::AbstractMatrix{T},n::Int64=100000000) where T<:Number
+    n,m=size(A)
+    newQ=diagm(ones(n))
+    newA=copy(A)
+    for i in 1:n
+        Q,R=QR_decomposition(newA)
+        newA=R*Q
+        newQ*=Q
+    end
+    return newA,newQ
+end
+
+#--------------------------------------------------------#
 end
