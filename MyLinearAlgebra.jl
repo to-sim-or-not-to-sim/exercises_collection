@@ -357,12 +357,12 @@ function linear_leastsquares(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     At=A'
     N=At*A
     z=At*b
-    x=matrix_solver_PLU(N,z)
+    x=matrix_solver_QR(N,z)
     return x
 end
 
 """Returns a matrix filled with the standard polynomials of a set of data."""
-function poly_matrix(set::Vector{T},n::Int64) where T<:Number
+function Vandermonde_matrix(set::Vector{T},n::Int64) where T<:Number
     m=length(set)
     A=zeros(m,n)
     for i in 1:m
@@ -404,7 +404,7 @@ end
 Disclaimer: it returns Taylor series for n->+inf and infinite points; otherwise it approximate it to better fit the data.
 Suggestion: use it on a small interval with a lot of data in it."""
 function taylor_linear_fit(x::Vector{T},y::Vector{T},n::Int64;plot::Bool=false,color::String="blue",label::String="Taylor fit") where T<:Number
-    A=poly_matrix(x,n)
+    A=Vandermonde_matrix(x,n)
     z=linear_leastsquares(A,y)
     if plot
         plot_matrix(x,A,z,color,label)
@@ -439,20 +439,17 @@ function QR_decomposition(A::AbstractMatrix{T}) where T<:Number
     m,n=size(A)
     Q=zeros(Float64,m,n)
     R=zeros(Float64,n,n)
-    P_i=zeros(Float64,m,m)
-    identity=diagm(ones(m))
-    P_i[:,:]=identity[:,:]
-    v_tot=zeros(Float64,m,n)
-    for i in 1:n
-        v_i=P_i*A[:,i]
-        v_tot[:,i]=v_i
-        Q[:,i]=v_i/norm(v_i)
-        P_i*=(identity-Q[:,i]*Q[:,i]')
-    end
-    for i in 1:n
-        for j in i:n
-            v_j=v_tot[:,j]
-            R[i,j]=Q[:,i]'*A[:,j]
+    for j in 1:n
+        v_j=A[:,j]
+        for i in 1:j-1
+            R[i,j]=Q[:,i]'*v_j
+            v_j=v_j-Q[:,i]*R[i,j] 
+        end
+        R[j,j]=norm(v_j)
+        if R[j,j]!=0
+            Q[:,j]=v_j/R[j,j]
+        else
+            Q[:,j]=zeros(length(v_j))
         end
     end
     return Q,R
@@ -472,8 +469,9 @@ function matrix_solver_Qless(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
     A2=zeros(n,m+1)
     A2[:,1:m]=A[:,:]
     A2[:,m+1]=b
-    Q,R=QR_decomposition(A2)
-    z=R[:,m+1]
+    Q1,R1=QR_decomposition(A2)
+    z=R1[1:m,m+1]
+    R=R1[1:m,1:m]
     x=upper_triangular_matrix_solver(R,z)
     return x
 end
