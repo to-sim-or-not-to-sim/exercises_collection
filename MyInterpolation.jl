@@ -1,7 +1,7 @@
 module MyInterpolation
 
 """Returns a vector filled with 'len' equally spaced numbers from 'a' to 'b'."""
-function linspace(a,b,len)
+function linspace(a::Number,b::Number,len::Int64)
     x=zeros(len)
     step=(b-a)/(len-1)
     for i in 1:len
@@ -41,26 +41,12 @@ function lambdas(x::Vector{T}) where T<:Number
     return lambda
 end
 
-"""Calculates the factorial of a number. If you want you can truncate the factorial using 'start='."""
-function fact(n::Int64;start::Int64=1)
-    result=1
-    for i in start:n
-        result*=i
-    end
-    return result
-end
-
-"""Calculates the binomial coefficient (n i)."""
-function binomial_coefficient(n::Int64,i::Int64)
-    return fact(n,start=i+1)/fact(n-i)
-end
-
 """Calculates the lambdas for the interpolation using equally distributed points. For large n doesn't work."""
 function equi_lambdas(n::Int64)
     lambda=zeros(n)
     lambda[1]=n
     for i in 2:n
-        lambda[i]=lambda[i-1]*(i-n)/i
+        lambda[i]=lambda[i-1]*(i-1-n)/i
     end
     return lambda
 end
@@ -94,7 +80,7 @@ function equi_interpolation(x::Number,a::Number,b::Number,n::Int64,f::Function)
     if xs[i]==x
         x+=1e-12
     end
-    lambda=lambdas(xs)
+    lambda=equi_lambdas(length(xs))
     weights=@. lambda/(x-xs)
     return weight_mean(ys,weights)
 end
@@ -146,15 +132,80 @@ function inf_norm(y::Vector{T},y_fit::Vector{T}) where T<:Number
         println("Error")
         return
     end
-    max=abs(y[1]-y_fit[1])
-    for i in 2:len
-        value=abs(y[i]-y_fit[i])
-        if value>max
-            max=value
+    return maximum(abs.(y.-y_fit))
+end
+
+function chebyshev2real(x::Vector{T}) where T<:Number
+	return @. 2*x/(1-x^2)
+end
+
+function real_line_interpolation(z::Number,f::Function,n::Int64)
+	xs,lambda=chebyshev_nodes(n,kind=1)
+	zs=chebyshev2real(xs)
+	ys=f.(zs)
+	i=1
+    while zs[i]<z && i<length(zs)
+        i+=1
+    end
+    if zs[i]==z
+        z+=1e-12
+    end
+    weights=@. lambda/(z-zs)
+    return weight_mean(ys,weights)
+end
+
+function trigonometric_interpolation(x::Number,f::Function,N::Int64;a::Number=-1,b::Number=1)
+    j=linspace(0,N-1,N)
+    xs=@. a+j*(b-a)/N
+    ys=f.(xs)
+    i=1
+    while xs[i]<x && i<length(xs)
+        i+=1
+    end
+    if xs[i]==x
+        return ys[i]
+    end
+    if N%2==1
+        tau=@. sin(N*pi*(x-xs)/(b-a))/(N*sin(pi*(x-xs)/(b-a)))
+    else
+        tau=@. sin(N*pi*(x-xs)/(b-a))/(N*tan(pi*(x-xs)/(b-a)))
+    end
+    sum=0
+    for i in 1:N
+        sum+=tau[i]*ys[i]
+    end
+    return sum
+end
+
+function chattrigonometric_interpolation(x, f, N; a=-1, b=1)
+    xs = linspace(a, b, N)
+    ts = @. 2π*(xs - a)/(b - a)
+    t = 2π*(x - a)/(b - a)
+
+    ys = f.(xs)
+
+    # pesi (-1)^(j-1)
+    w = [(-1)^(j-1) for j in 1:N]
+
+    # se x coincide con un nodo, ritorna f(x)
+    for j in 1:N
+        if abs(t - ts[j]) < 1e-14
+            return ys[j]
         end
     end
-    return max
+
+    # formula di Lagrange trigonometrica
+    num = 0.0
+    den = 0.0
+    for j in 1:N
+        cot_term = 1 / tan((t - ts[j]) / 2)
+        num += w[j] * ys[j] * cot_term
+        den += w[j] * cot_term
+    end
+
+    return num / den
 end
+
 
 #-----------------------------------------------
 end
