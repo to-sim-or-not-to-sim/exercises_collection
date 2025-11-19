@@ -177,35 +177,5 @@ function trigonometric_interpolation(x::Number,f::Function,N::Int64;a::Number=-1
     return sum
 end
 
-function chattrigonometric_interpolation(x, f, N; a=-1, b=1)
-    xs = linspace(a, b, N)
-    ts = @. 2π*(xs - a)/(b - a)
-    t = 2π*(x - a)/(b - a)
-
-    ys = f.(xs)
-
-    # pesi (-1)^(j-1)
-    w = [(-1)^(j-1) for j in 1:N]
-
-    # se x coincide con un nodo, ritorna f(x)
-    for j in 1:N
-        if abs(t - ts[j]) < 1e-14
-            return ys[j]
-        end
-    end
-
-    # formula di Lagrange trigonometrica
-    num = 0.0
-    den = 0.0
-    for j in 1:N
-        cot_term = 1 / tan((t - ts[j]) / 2)
-        num += w[j] * ys[j] * cot_term
-        den += w[j] * cot_term
-    end
-
-    return num / den
-end
-
-
 #-----------------------------------------------
 end
