@@ -58,7 +58,8 @@ function interpolation(x::Number,xs::Vector{T},ys::Vector{T}) where T<:Number
         println("Error")
         return
     end
-    while xs[i]<x
+    i=1
+    while xs[i]<x && i<length(xs)
         i+=1
     end
     if xs[i]==x
@@ -74,7 +75,7 @@ function equi_interpolation(x::Number,a::Number,b::Number,n::Int64,f::Function)
     xs=linspace(a,b,n)
     ys=f.(xs)
     i=1
-    while xs[i]<x
+    while xs[i]<x && i<length(xs)
         i+=1
     end
     if xs[i]==x
