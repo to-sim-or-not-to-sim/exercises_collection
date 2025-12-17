@@ -477,11 +477,11 @@ function matrix_solver_Qless(A::AbstractMatrix{T},b::Vector{T}) where T<:Number
 end
 
 """Returns a try to diagonalize the matrix and the matrix with eigenvectors."""
-function eigenvalues(A::AbstractMatrix{T},n::Int64=100000000) where T<:Number
+function eigenvalues(A::AbstractMatrix{T};k::Int64=100) where T<:Number
     n,m=size(A)
     newQ=diagm(ones(n))
     newA=copy(A)
-    for i in 1:n
+    for i in 1:k
         Q,R=QR_decomposition(newA)
         newA=R*Q
         newQ*=Q
