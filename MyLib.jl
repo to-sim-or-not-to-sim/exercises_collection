@@ -858,7 +858,7 @@ module MyLib
                 x_previous=x_0
                 fx=g(x_0)
                 dfx=df(x_0)
-                d2fx=df(x_0)
+                d2fx=d2f(x_0)
                 x_0-=fx/(dfx-fx*d2fx/dfx)
                 if bracketing
                     if x_0<a || x_0>b

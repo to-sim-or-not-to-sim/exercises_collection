@@ -8,7 +8,7 @@ import .MyLib.MyLinearAlgebra as LA
 function ex1()
     f(x)=x^3-7*x^2+14*x-6
 
-    m,all_ms=my.bisection(f,0,1)
+    m,all_ms=my.bisection(f,0,1,tol=eps())
     rounded_m=round(m,digits=8)
     println(m,all_ms)
     x=collect(0:0.01:1)
@@ -31,7 +31,6 @@ function ex1()
     savefig("bisection1.png")
     show()
 
-
     start=2
     y_fit=zeros(length(all_ms)-1-start)
     x_fit=zeros(length(all_ms)-1-start)
@@ -44,9 +43,10 @@ function ex1()
     z=LA.poly_linear_fit(x_fit,y_fit,2,plot=true,label="Interpolation")
     legend(fontsize=15)
     println("C= ",10^(-z[1]),"\nq= ",z[2])
+    est_C=abs.(all_ms[3:end].-all_ms[2:end-1])./abs.(all_ms[2:end-1].-all_ms[1:end-2])
+    println("another way: q=1 => C= ", est_C)
     savefig("bisection2.png")
     show()
-
     new_ms=zeros(12)
     for i in 1:6
         a=i*0.05
@@ -411,7 +411,7 @@ function ex2_optional()
     df3(x)=exp(x+1)-1
     d2f3(x)=exp(x+1)
     as=[-2,-0.2,-2]
-    bs=[2,1.4,2]
+    bs=[2,1.3,2]
     fs=[f1,f2,f3]
     dfs=[df1,df2,df3]
     d2fs=[d2f1,d2f2,d2f3]

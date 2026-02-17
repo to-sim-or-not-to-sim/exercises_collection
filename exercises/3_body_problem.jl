@@ -26,7 +26,12 @@ function RKDP(fs::AbstractVector,u0s::Vector{T},a::Number,b::Number;tol::Float64
     end
     ti=Float64[]
     push!(ti,a)
+    k=1
     while ti[end]<b
+        if ti[end]>=k*b/100
+            println("$k %")
+            k+=1
+        end
         ks=zeros(7,len) 
         for i in 1:7
             t_step=ti[end]+C[i]*h
@@ -99,10 +104,11 @@ fs=[dot_x1,dot_y1,dot_x2,dot_y2,dot_x3,dot_y3,dot_vx1,dot_vy1,dot_vx2,dot_vy2,do
 #u0s=[1,0,0,5,-1,10,-0.25,0.25,0.5,0.5,0.25,-0.25]
 u0s=[0,0,0,10,0,20,0.7,0,1,0,1.3,0]
 a=0
-b=50
+b=1000
 frames=30
 println("Calculating...")
 uis,tis=RKDP(fs,u0s,a,b)
+#=
 println("Animation...")
 i=1
 len=length(tis)
@@ -116,7 +122,7 @@ anim=@animate while i<len
     p=round(100*(i-1)/(length(uis[1])),digits=3)
     println("$p %")
     i_start=i
-    while tis[i]<tis[i_start]+1/frames
+    while tis[i]<tis[i_start]+10
         global i+=1
         if i>len
             break
@@ -126,3 +132,15 @@ end
 println("Saving...")
 gif(anim,"3bp.gif",fps=frames)
 println("Done")
+=#
+
+step=div(len,100)
+for i in 1:step:len
+    scatter([uis[1][i]],[uis[2][i]],color=:deepskyblue,legend=false)
+    scatter!([uis[3][i]],[uis[4][i]],color=:crimson,legend=false)
+    scatter!([uis[5][i]],[uis[6][i]],color=:goldenrod,legend=false)
+    plot!(uis[1][1:1000:i],uis[2][1:1000:i],color=:deepskyblue,legend=false)
+    plot!(uis[3][1:1000:i],uis[4][1:1000:i],color=:crimson,legend=false)
+    plot!(uis[5][1:1000:i],uis[6][1:1000:i],color=:goldenrod,legend=false)
+    savefig("3bodyproblem_$i.png")
+end
