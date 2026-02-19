@@ -8,5 +8,6 @@ A collection of exercises done at university during computational physics lectur
 - Ordinary differntial equation.
 <p>
 Furthermore you will find a library with different modules dedicated to each section lisetd above and a report (coming soon) of all the results obtained where you will find the text of the exercises and a brief summary of the theory behind.
+  
 ---
 Note: probably it will not be updated.
