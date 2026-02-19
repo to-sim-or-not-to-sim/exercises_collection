@@ -10,7 +10,7 @@ y3=data["y3"]
 tis=data["t"]
 len=length(tis)
 
-fig=Figure(resolution=(600,600))
+fig=Figure(size=(600,600))
 ax=Axis(fig[1,1])
 
 pts1=Observable(Point2f[])
@@ -52,4 +52,5 @@ record(fig,"three_body_problem.gif",1:10:len;framerate=30) do i
     trail3[]=Point2f.(x3[a:i],y3[a:i])
     println(round(i/len*100, digits=2), " %")
 end
+
 
