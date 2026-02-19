@@ -291,10 +291,9 @@ function ex3(Vmax,width)
     println("R_30+T_30= ",(R_30+T_30)/P_total_30)
 end
 
-function ex4(V0,omega,x0,sigma,k0,t_final,frames)
+function ex4(V0,omega,x0,sigma,k0,t_final,frames,delta_x)
     V(x)=V0/(cosh(x/omega)^2)
     
-    delta_x=0.2
     x=collect(-100:delta_x:100)
     delta_t=0.005
     t=collect(0:delta_t:t_final)
@@ -336,7 +335,7 @@ function ex4(V0,omega,x0,sigma,k0,t_final,frames)
     end
 
     anim=@animate for i in 1:100:lent
-        println(i)
+        #println(i)
         plot(x,abs.(psi[i,:]).^2,xlim=(-100,100),ylim=(-0.1,0.4),title="t=$(t[i])",titlefontsize=15,legend=false)
         plot!(x,V.(x),label=false)
     end
@@ -451,7 +450,7 @@ function ex5()
 
 end
 
-# IT MAKE TAKE A LONG TO EXECUTE ALL THE EXERCISES TOGETHER
+# IT MAY TAKE A LONG TO EXECUTE ALL THE EXERCISES TOGETHER
 
 ex1_2(0,1,0,-10,10,0,20)
 ex1_2(20,2,2,0,100,0,20)
@@ -461,11 +460,11 @@ println("V=5, -1<x<1")
 ex3(5,2)
 println("V=2, -0.5<x<0.5")
 ex3(2,1)
-ex4(2,1,-20,2,2,40,[0,10,30])
-ex4(-2,0.5,-20,4,1,80,[0,20,60])
-ls=collect(1:10)
+ex4(2,1,-20,2,2,40,[0,10,30],1/sqrt(2))
+ex4(-2,0.5,-20,4,1,80,[0,20,60],1/(2*sqrt(2)))
+ls=collect(1:5)
 for l in ls
     V0=-2*l*(l+1)
-    ex4(V0,0.5,-20,4,1,80,[0,20,60])
+    ex4(V0,0.5,-20,4,1,80,[0,20,60],1/(2*sqrt(2)*l))
 end
 ex5()
