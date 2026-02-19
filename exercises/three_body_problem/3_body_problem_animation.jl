@@ -1,6 +1,6 @@
 using JSON,GLMakie
 
-data=JSON.parsefile("./fisica computazionale/0/3bp_1_unbound/3_body_problem.json")
+data=JSON.parsefile("3_body_problem.json")
 x1=data["x1"]
 y1=data["y1"]
 x2=data["x2"]
@@ -52,3 +52,4 @@ record(fig,"three_body_problem.gif",1:10:len;framerate=30) do i
     trail3[]=Point2f.(x3[a:i],y3[a:i])
     println(round(i/len*100, digits=2), " %")
 end
+
