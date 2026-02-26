@@ -819,6 +819,11 @@ module MyLib
                             a=x_0
                         end
                     end
+                    if g(x_0)*g(b)<0
+                        a=x_0
+                    else
+                        b=x_0
+                    end
                 end
                 push!(all_xs,x_0)
             end
@@ -869,6 +874,11 @@ module MyLib
                             a=x_0
                         end
                     end
+                    if g(x_0)*g(b)<0
+                        a=x_0
+                    else
+                        b=x_0
+                    end
                 end
                 push!(all_xs,x_0)
             end
@@ -899,6 +909,11 @@ module MyLib
                         else
                             a=x
                         end
+                    end
+                    if g(x)*g(b)<0
+                        a=x
+                    else
+                        b=x
                     end
                 end
                 push!(all_xs,x)
