@@ -7,9 +7,7 @@ A collection of exercises done at university during computational physics lectur
 - [Numerical integration](exercises/Integration.jl)
 - [Ordinary differential equation (ODEs)](exercises/ODE.jl)
   
-Additionally, you will find:
-- a [library](MyLib.jl) with different modules dedicated to each section;
-- a report (coming soon), summarizing all the results obtained, where you will find the text of the exercises and a brief summary of the theory behind.
+Additionally, you will find a [library](MyLib.jl) with different modules dedicated to each section.
 
 ---
 
